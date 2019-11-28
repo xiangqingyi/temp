@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../../layouts/header %>
+  <!-- DataTables -->
+  <link rel="stylesheet" href="../../plugins/datatables/dataTables.bootstrap.css">
+	<!-- Add fancyBox CSS -->
+	<link rel="stylesheet" type="text/css" href="../../plugins/fancyBox/source/jquery.fancybox.css?v=2.1.5" media="screen" />
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <% include ../../layouts/main-header %>
+
+  <% include ../../layouts/main-sidebar %>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        功能頁管理
+        <small>資料列表</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 首頁</a></li>
+        <li><a href="#">系統管理</a></li>
+        <li class="active">功能頁管理</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">功能頁管理列表</h3>
+            </div>
+            <div class="row">
+              <div class="col-xs-6">
+                <div class="col-xs-2">
+                  <a href="/pagemanger/add" type="button" class="btn btn-primary">新增</a>
+                </div>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="pagemanger_datatable" class="table table-bordered table-striped table-hover" >
+                  <thead>
+                      <tr>
+                          <th>功能頁名稱</th>
+                          <th>頁面路由</th>
+                          <th>操作</th>
+                      </tr>
+                  </thead>
+                  <tfoot>
+                      <tr>
+                          <th>功能頁名稱</th>
+                          <th>頁面路由</th>
+                          <th>操作</th>                          
+                      </tr>
+                  </tfoot>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <% include ../../layouts/Modal-del %>
+  
+  <% include ../../layouts/main-footer %>
+
+  <% include ../../layouts/control-sidebar %>
+  
+</div>
+<!-- ./wrapper -->
+
+  <% include ../../layouts/footer-JS %>
+    <!-- DataTables -->
+    <script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <!-- Add mousewheel plugin (this is optional) -->
+    <script type="text/javascript" src="../../plugins/fancyBox/lib/jquery.mousewheel.pack.js?v=3.1.3"></script>
+    <!-- Add fancyBox main JS -->
+    <script type="text/javascript" src="../../plugins/fancyBox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+    <!-- MyDataTable-->
+    <script src="../../dist/js/myDataTable.js"></script>
+    <!-- Common Func-->
+    <script src="../../dist/js/livestream_common.js"></script>
+    <!-- page script -->
+    <script>
+    $(function () {
+        // MyDataTable
+        $('#pagemanger_datatable').myDataTable( {        
+          "ajax": '/pagemanger/list',
+          "columns": [
+              { "data": "name" },
+              { "data": "path" },
+              { "data": null }
+          ],
+          "operationCol":{
+            "show":true,
+            "editUrl":'/pagemanger/edit/',
+            "delUrl":'/pagemanger/del/'
+          },
+          "imgCol":{
+            "show":false
+          }
+        } );        
+    });
+    </script>    
+</body>
+</html>

@@ -1,0 +1,16 @@
+FROM keymetrics/pm2:latest-alpine
+
+# Bundle APP files
+RUN mkdir -p /usr/runningapp
+COPY . /usr/runningapp
+
+# Install app dependencies
+ENV NODE_ENV development
+EXPOSE 3030
+WORKDIR /usr/runningapp/
+
+# Show current folder structure in logs
+RUN ls
+
+# CMD [ "pm2-runtime", "start", "./bin/www" ]
+CMD [ "pm2-runtime", "start", "process.yml"]

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>考績系統</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- Bootstrap 3.3.6 -->
+  <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css">
+  <!-- Bootstrap-dialog -->
+  <link rel="stylesheet" href="../../bootstrap-dialog/bootstrap-dialog.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="../../plugins/font-awesome/Font-Awesome-4.5.0/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="../../plugins/ionicons/2.0.1/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="../../dist/css/AdminLTE.min.css">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="../../plugins/iCheck/square/blue.css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="http://cdn.bootcss.com/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+  <style>
+    body {
+      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjZmZmIj48L3JlY3Q+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNjY2MiPjwvcmVjdD4KPC9zdmc+");
+    }
+
+    .box-shadow {
+      -webkit-box-shadow: 0px 10px 20px 0px rgba(50, 50, 50, 0.52);
+      -moz-box-shadow:    0px 10px 20px 0px rgba(50, 50, 50, 0.52);
+      box-shadow:         0px 10px 20px 0px rgba(50, 50, 50, 0.52)
+    }
+
+    .nav-tabs-custom{
+      margin-bottom: 0px;
+    }
+
+    .panel-body{
+      padding: 20px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="container" style="margin: 7% auto;">
+    <div class="row">
+      <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 col-md-5 col-md-offset-4 col-lg-4 col-lg-offset-4">
+
+        <h3>考核系統</h3>
+
+        <div class="panel panel-default box-shadow">
+          <!-- Custom Tabs -->
+          <div>
+            <ul class="nav nav-tabs nav-justified">
+              <li class="active"><a href="#tab_1" data-toggle="tab"><i class="glyphicon glyphicon-user"></i> 帳號認證</a></li>
+              <li><a href="#tab_2" data-toggle="tab"><i class="glyphicon glyphicon-qrcode"></i> 香信QR Code</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="panel-body tab-pane active" id="tab_1">
+                <form id="login_form" method="POST">
+
+                  <div class="form-group">
+                    <label for="email">帳號</label>
+                    <div class="form-group has-feedback">
+                      <input name="account" type="text" class="form-control" value="" id="account" placeholder="請輸入帳號">
+                      <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="password">密碼</label>
+                    <div class="form-group has-feedback">
+                      <input name="password" type="password" class="form-control" id="password" value="" placeholder="請輸入密碼">
+                      <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                    </div>
+                  </div>
+
+                  <div class="checkbox">
+                    <label><input type="checkbox"> 記住帳號</label>
+                  </div>
+
+                  <button id="login_submit" type="submit" class="btn btn-block btn-primary" tabindex="3">登入</button>
+
+                </form>
+              </div>
+              <div class="panel-body tab-pane" id="tab_2">
+                <div class="panel-body login-box-body">
+                  <div class="form-group">
+                    <p id="qrcode_area" class="text-center">
+                      <!--<img id="qrcode" src="http://civetinterface.foxconn.com/Home/D2Code?content=http://civetinterface.foxconn.com/Open/oauth/SL/tm0fdmdrns04qeav1a2ieprf?SXZM&scale=5&Version=0">-->
+                    </p>
+                    <div style="text-align: center; margin: 12px;" id="display_result">
+                      请在手机端使用香信扫描二维码！
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+      </div><!--.cols-->
+    </div><!--.row-->
+  </div><!--.container-->
+
+<!-- jQuery 2.2.3 -->
+<script src="../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- jQuery validate 1.16.0 -->
+<script src="../../plugins/jquery-validation/1.16.0/jquery.validate.min.js"></script>
+<script src="../../plugins/jquery-validation/1.16.0/localization/messages_zh_TW.min.js"></script>
+<!-- Bootstrap 3.3.6 -->
+<script src="../../bootstrap/js/bootstrap.min.js"></script>
+<!-- Bootstrap-dialog -->
+<script src="../../bootstrap-dialog/bootstrap-dialog.min.js"></script>
+<!-- iCheck -->
+<script src="../../plugins/iCheck/icheck.min.js"></script>
+<!-- myValidate-->
+<script src="../../dist/js/myValidate.js"></script>
+<!-- Common Func-->
+<script src="../../dist/js/livestream_common.js"></script>
+<script>
+  $.ajaxSetup({cache:false});
+  var IntervalID = null;
+
+  $(function () {
+
+      var today = new Date().toDateString();
+      $('.today').html(today);
+
+
+    $('input').iCheck({
+      checkboxClass: 'icheckbox_square-blue',
+      radioClass: 'iradio_square-blue',
+      increaseArea: '20%' // optional
+    });
+
+    $('input[type=button]').click(function() {
+      $('#account').val(this.value);
+        $('#password').val($(this).attr('data-ps'));
+        $('#password').val('123');
+//        $('#password').val($(this).attr('data-ps'));
+    });
+
+    //送出
+    $('#login_submit').on('click',function(){
+        $("#login_form").submit();
+        return false;
+    });
+
+    $("#login_form").myValidate({
+        rules: {
+          'account': "required",
+          'password': "required"
+        }
+      },function(){
+          //送出邏輯
+          var ajaxOptions = {type: 'POST',url: '/login'};
+
+          //組送出的物件
+          var submitData = {
+            form:$("#login_form").serializeObject()
+          }
+          var errorMSG = '登入失敗，請稍後再試。';
+
+          commonFunc.ajaxDataSubmit(submitData,ajaxOptions,errorMSG,function(result){
+            if(result.error==0){
+//                commonFunc.showMsgDialogWithNoting('完成，請重新登入。');
+                location.href = '/account';
+            }
+          })
+      });
+
+      GetQrCode();
+      
+      $('a[data-toggle="tab"]:eq(0)').on('shown.bs.tab', function (e) {
+        clearInterval(IntervalID);
+      });
+
+      $('a[data-toggle="tab"]:eq(1)').on('shown.bs.tab', function (e) {
+        IntervalID = setInterval("readresult()", 1000);
+      });
+      
+  });
+
+  
+  function GetQrCode() {
+      $.ajax({
+          type: 'GET',          
+          url: '/civetsso/qrcode',
+          dataType: 'json'
+      }).done(function(result2){
+          if (result2.error == 0) {
+              $('#qrcode_area').prepend('<img id="qrcode" width="197" height="197" src="'+result2.data+'" />')
+          } else {
+              $("#display_result").html("無法取得二維碼");
+              console.log(result2.message);
+          }
+      }).fail(function( jqXHR, textStatus, errorThrown){
+
+      });
+  }
+
+  var word1 = "扫描成功，请在手机端确定登录！";
+  var word2 = "正在登录...";
+  function readresult() {      
+      $.get("/civetsso/scan", function (data, status) {
+          var return_code = parseInt(data.data, 10);
+          if (return_code == 1)
+          {
+              $('a[data-toggle="tab"]:eq(0)').removeAttr('data-toggle');            
+              $("#display_result").html(word1);
+          }
+          else if(return_code == 2)
+          {
+              clearInterval(IntervalID);
+              $("#display_result").html(word2);              
+              location.href = '/civetsso/signin';
+          }
+      });
+  }
+
+</script>
+</body>
+</html>

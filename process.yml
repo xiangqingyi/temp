@@ -1,0 +1,15 @@
+apps:
+  - script   : ./bin/www
+    name     : 'web'
+    # watch  : true
+    env    :
+      NODE_ENV: development
+    env_production:
+      NODE_ENV: production
+  - script   : ./job/jobapp.js
+    name     : 'job'
+    # watch  : true
+    env    :
+      NODE_ENV: development
+    env_production:
+      NODE_ENV: production      

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../../layouts/header %>
+  <!-- DataTables -->
+  <link rel="stylesheet" href="../../plugins/datatables/dataTables.bootstrap.css">
+	<!-- Add fancyBox CSS -->
+	<link rel="stylesheet" type="text/css" href="../../plugins/fancyBox/source/jquery.fancybox.css?v=2.1.5" media="screen" />
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <% include ../../layouts/main-header %>
+
+  <% include ../../layouts/main-sidebar %>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        團隊成員管理
+        <small>資料列表</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 首頁</a></li>
+        <li><a href="#">團隊管理</a></li>
+        <li class="active">團隊成員管理</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">團隊成員列表</h3>
+            </div>
+            <div class="row">
+              <div class="col-xs-6">
+                <div class="col-xs-2">
+                  <a href="/member/add" type="button" class="btn btn-primary">新增</a>
+                </div>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="member_datatable" class="table table-bordered table-hover" >
+                <tbody>
+              <%
+                 for (var idx = 0, len = memberData.data.length; idx < len; idx++) {
+                    var team_Member = memberData.data[idx];
+                         
+              %>
+              <tr style="background-color: #587ea3">
+                <td colspan="5">
+                  <div class="row">
+                    <div class="col-xs-5 col-sm-6 col-md-8 col-lg-9">
+                      <h5 style="color: #FFFFFF"><%= team_Member.name%> (<%= team_Member.leader.userName%>)</h5>
+                    </div>
+                    <div class="col-xs-7 col-sm-6 col-md-4 col-lg-3">
+                      <div class="pull-right">
+                          <a href='./member/edit/<%= team_Member._id%>' class='btn btn-warning' style='margin:0 5px;'> 编辑</a>
+                          <a class='btn btn-danger' style='margin:0 5px;'
+                             onclick='commonFunc.dataTableDelSubmit("member/del/<%= team_Member._id%>","/member");'> 删除</a>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+                  <%
+                    var names = team_Member.memberNames;
+                    if (names != null) {
+
+
+                    var length = names.length;
+                    var lastnum = length % 5;
+
+                    for (var idx2 = 0, len2 = length; idx2 < len2; idx2++) {
+                        var name = names[idx2];
+                          if (idx2 % 5 == 0) {
+                      %>
+                          <tr><td><%= name %></td>
+                      <%
+                          } else if (idx2 % 5 == 4) {
+                      %>
+                          <td><%= name %></td></tr>
+                      <%
+                          } else {
+                      %>
+                      <td><%= name %></td>
+                      <%
+                          }
+                        }
+                    if (lastnum > 0) {
+                    %>
+                        <td colspan="<%= (5-lastnum)%>"></td></tr>
+                    <%
+                    }
+                    }
+                 }
+                  
+              %>
+                </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <% include ../../layouts/Modal-del %>
+  
+  <% include ../../layouts/main-footer %>
+
+  <% include ../../layouts/control-sidebar %>
+  
+</div>
+<!-- ./wrapper -->
+
+  <% include ../../layouts/footer-JS %>
+    <!-- DataTables -->
+    <script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <!-- Add mousewheel plugin (this is optional) -->
+    <script type="text/javascript" src="../../plugins/fancyBox/lib/jquery.mousewheel.pack.js?v=3.1.3"></script>
+    <!-- Add fancyBox main JS -->
+    <script type="text/javascript" src="../../plugins/fancyBox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+    <!-- MyDataTable-->
+    <script src="../../dist/js/myDataTable.js"></script>
+    <!-- Common Func-->
+    <script src="../../dist/js/livestream_common.js"></script>
+    <!-- page script -->
+ 
+</body>
+</html>

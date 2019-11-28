@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>考績系統</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- Bootstrap 3.3.6 -->
+  <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css">
+  <!-- Bootstrap-dialog -->
+  <link rel="stylesheet" href="../../bootstrap-dialog/bootstrap-dialog.css">   
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="../../plugins/font-awesome/Font-Awesome-4.5.0/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="../../plugins/ionicons/2.0.1/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="../../dist/css/AdminLTE.min.css">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="../../plugins/iCheck/square/blue.css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="http://cdn.bootcss.com/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <b>考核系統</b>
+  </div>
+  <!-- /.login-logo -->  
+  <div class="login-box-body">    
+
+    <input type="button" class="testBtn" value="tla" /><input type="button" class="testBtn" value="tma1" /><input type="button" class="testBtn" value="tma2" />
+    <input type="button" class="testBtn" value="tlb" /><input type="button" class="testBtn" value="tmb1" /><input type="button" class="testBtn" value="16502" /><input type="button" class="testBtn" value="superadmin" />
+    <input type="button" class="testBtn" value="ssa" />
+
+    <form id="login_form" method="post">
+      <div class="form-group has-feedback">
+        <input name="account" type="text" class="form-control" value="" placeholder="Account">
+        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+      </div>
+      <div class="form-group has-feedback">
+        <input name="password" type="password" class="form-control" value="123" placeholder="Password">
+        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+      </div>
+      <div class="row">
+        <div class="col-xs-8">
+          <div class="checkbox icheck">
+            <label>
+              <input type="checkbox"> Remember Me
+            </label>
+          </div>
+        </div>
+        <!-- /.col -->
+        <div class="col-xs-4">
+          <button id="login_submit" type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+        </div>
+        <!-- /.col -->
+      </div>
+    </form>
+  </div>
+  <!-- /.login-box-body -->
+</div>
+<!-- /.login-box -->
+
+<!-- jQuery 2.2.3 -->
+<script src="../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- jQuery validate 1.16.0 -->
+<script src="../../plugins/jquery-validation/1.16.0/jquery.validate.min.js"></script>
+<script src="../../plugins/jquery-validation/1.16.0/localization/messages_zh_TW.min.js"></script>
+<!-- Bootstrap 3.3.6 -->
+<script src="../../bootstrap/js/bootstrap.min.js"></script>
+<!-- Bootstrap-dialog -->
+<script src="../../bootstrap-dialog/bootstrap-dialog.min.js"></script>
+<!-- iCheck -->
+<script src="../../plugins/iCheck/icheck.min.js"></script>
+<!-- myValidate-->
+<script src="../../dist/js/myValidate.js"></script>  
+<!-- Common Func-->
+<script src="../../dist/js/livestream_common.js"></script>
+<script>
+  $(function () {
+    $('input').iCheck({
+      checkboxClass: 'icheckbox_square-blue',
+      radioClass: 'iradio_square-blue',
+      increaseArea: '20%' // optional
+    });
+
+    $('input').click(function() {
+      $('input[type=text]').val(this.value);
+    });
+
+    //送出
+    $('#login_submit').on('click',function(){
+        $("#login_form").submit();
+        return false;
+    });
+
+    $("#login_form").myValidate({
+        rules: {
+          'account': "required",
+          'password': "required"
+        }
+      },function(){
+          //送出邏輯
+          var ajaxOptions = {type: 'POST',url: '/login'};
+       
+          //組送出的物件
+          var submitData = {
+            form:$("#login_form").serializeObject()
+          }
+          var errorMSG = '登入失敗，請稍後再試。';
+          
+          commonFunc.ajaxDataSubmit(submitData,ajaxOptions,errorMSG,function(result){
+            if(result.error==0){
+              location.href = '/account';
+            }
+          })
+      });    
+  });
+</script>
+</body>
+</html>

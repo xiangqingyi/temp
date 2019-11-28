@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Select2 -->
+  <link rel="stylesheet" href="../../plugins/select2/select2.min.css">
+
+   <% include ../../layouts/header %>
+  <!-- DataTables -->
+  <link rel="stylesheet" href="../../plugins/datatables/dataTables.bootstrap.css">
+  <!-- Add fancyBox CSS -->
+  <link rel="stylesheet" type="text/css" href="../../plugins/fancyBox/source/jquery.fancybox.css?v=2.1.5" media="screen" />
+
+  <!-- bootstrap datepicker -->
+  <link rel="stylesheet" href="../../plugins/datepicker/datepicker3.css">
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+    <% include ../../layouts/main-header %>
+
+    <% include ../../layouts/main-sidebar %>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        評分總表
+        <small>分析圖</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 首頁</a></li>
+        <li><a href="#">報表分析</a></li>
+        <li class="active">評分總表-分析圖</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+
+          <div class="box box-primary">
+            <div class="box-body">
+              <div class="col-xs-7 col-sm-8 col-md-9 col-lg-10">
+                <div class="form-inline">
+                    <select id="range_select" name="leaderId" class="form-control select2" style="width: 60px;">
+                      <option value="year" selected>年</option>
+                      <option value="season">季</option>
+                      <option value="month">月</option>
+                    </select>
+                  <div id="picker-range" class="input-daterange input-group" style="width: 200px;">
+                    <input name="startDate" id="startDate" class="date-picker input-sm form-control"/>
+                    <span class="input-group-addon"> ~ </span>
+                    <input name="endDate" id="endDate" class="date-picker input-sm form-control" />
+                  </div>
+                  <a type="button" class="btn btn-success " id="btn_submit" onclick="submit()">查詢</a>
+                </div>
+              </div>
+              <div class="col-xs-5 col-sm-4 col-md-3 col-lg-2">
+                <div class="pull-right">
+                  <div class="btn-group">
+                    <a type="button" class="btn btn-warning" href="/reporttotallist">列表</a>
+                    <a type="button" class="btn btn-warning disabled" href="/reporttotalchart">分析圖</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+          <div class="box">
+            <form class="form-horizontal">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="member_name" class="col-sm-2 control-label">姓名/工號</label>
+                  <div class="col-sm-6">
+                    <select id="account_select" class="form-control select2" multiple="multiple" data-placeholder="請選擇姓名">
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="member_key" class="col-sm-2 control-label">團隊</label>
+                  <div class="col-sm-6">
+                    <select id="team_select" class="form-control select2" multiple="multiple" data-placeholder="請選擇團隊">
+                    </select>
+                  </div>
+                </div>
+
+                <div class="chart">
+                  <canvas id="lineChart"></canvas>
+                </div>
+
+              </div>
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+    <% include ../../layouts/Modal-del %>
+
+    <% include ../../layouts/main-footer %>
+
+    <% include ../../layouts/control-sidebar %>
+
+</div>
+<!-- ./wrapper -->
+
+<% include ../../layouts/footer-JS %>
+<!-- DataTables -->
+<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+<!-- Add mousewheel plugin (this is optional) -->
+<script type="text/javascript" src="../../plugins/fancyBox/lib/jquery.mousewheel.pack.js?v=3.1.3"></script>
+<!-- Add fancyBox main JS -->
+<script type="text/javascript" src="../../plugins/fancyBox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+<!-- MyDataTable-->
+<script src="../../dist/js/myDataTable.js"></script>
+<!-- Common Func-->
+<script src="../../dist/js/livestream_common.js"></script>
+<!-- page script -->
+
+<!-- Select2 -->
+<script src="../../plugins/select2/select2.full.min.js"></script>
+<script src="../../plugins/select2/i18n/zh-TW.js"></script>
+
+<!-- bootstrap datepicker -->
+<script src="../../plugins/datepicker/bootstrap-datepicker.js"></script>
+<script src="../../plugins/datepicker/locales/bootstrap-datepicker.zh-TW.js"></script>
+
+<!-- ChartJS 1.0.1 -->
+<script src="../../plugins/chartjs/Chart.min.js"></script>
+
+<script>
+
+    var columns_object = [];
+    var data_object = [];
+    var header_object = [];
+    var targets_object = [];
+
+    function submit() {
+
+        var selectaccounts =  $("#account_select").val();
+        var selectteams =  $("#team_select").val();
+        var startValue = $('#startDate').val();
+        var endValue = $('#endDate').val();
+        if (startValue == '' && endValue == '') {
+            commonFunc.showErrMsgDialogWithNoting('請選擇時間區間。');
+            $("#startDate").focus();
+            return;
+        } else if (startValue == '') {
+            commonFunc.showErrMsgDialogWithNoting('請選擇開始時間。');
+            $("#startDate").focus();
+            return;
+        } else if (endValue == '') {
+            commonFunc.showErrMsgDialogWithNoting('請選擇結束時間。');
+            $("#endDate").focus();
+            return;
+        } else if (endValue < startValue) {
+            commonFunc.showErrMsgDialogWithNoting('開始時間不能大於結束時間。');
+            $("#startDate").focus();
+            return;
+        }
+
+        GetDataAjax(startValue,endValue,selectaccounts,selectteams);
+    }
+
+    function GetDataAjax(start,end,accounts,teams) {
+        $.ajax({
+            type: 'POST',
+            url: '/reporttotalchart/list/' + rangetype + "/" + start + "/" + end,
+            dataType: 'json',
+            data: {
+                'accounts': accounts,
+                'teams': teams
+            }
+        }).done(function(result){
+            fillChart(result.data,result.datasets);
+        }).fail(function( jqXHR, textStatus, errorThrown){
+            commonFunc.showErrMsgDialogWithNoting('讀取數據失敗，請稍後再試。');
+        });
+    }
+
+    var selectObjData,selObj;
+    $(function () {
+        selectrange('year');
+
+        $('#range_select').change(function() {
+            selectrange(this.value);
+        });
+
+        //Initialize Select2 Elements
+        $(".select2").select2({
+            language: "zh-TW"
+        });
+
+        //處理下拉選單資料
+        $.ajax({
+            type: 'GET',
+            url: '/account/listExcludeAdmin',
+            dataType: 'json'
+        }).done(function(result){
+            if(result.error == 0){
+                //            console.log(result);
+                selectObjData = result.data;
+                selObj = $("#account_select");
+                $.each(selectObjData,function(){
+                    var id = this._id;
+                    var text=this.userName + "【" + this.account + "】";
+                    var appendValue =
+                        selObj.append("<option value='"+id+"'>"+text+"</option>");
+                });
+            }else{
+                console.log('Done:'+result.message);
+                commonFunc.showErrMsgDialogWithNoting('下拉選讀取數據失敗，請稍後再試。');
+            }
+        }).fail(function( jqXHR, textStatus, errorThrown){
+            console.log('Fail:'+errorThrown);
+            commonFunc.showErrMsgDialogWithNoting('下拉選讀取數據失敗，請稍後再試。');
+        });
+
+        //處理下拉選單資料
+        $.ajax({
+            type: 'GET',
+            url: '/member/simple/list',
+            dataType: 'json'
+        }).done(function(result){
+            if(result.error == 0){
+                selectObjData = result.data;
+                selObj2 = $("#team_select");
+                $.each(selectObjData,function(){
+                    var id = this._id;
+                    var text=this.name;
+                    var appendValue =
+                        selObj2.append("<option value='"+id+"'>"+text+"</option>");
+                });
+            }else{
+                console.log('Done:'+result.message);
+                commonFunc.showErrMsgDialogWithNoting('下拉選讀取數據失敗，請稍後再試。');
+            }
+        }).fail(function( jqXHR, textStatus, errorThrown){
+            console.log('Fail:'+errorThrown);
+            commonFunc.showErrMsgDialogWithNoting('下拉選讀取數據失敗，請稍後再試。');
+        });
+
+    });
+
+    var optionMonthDatepicker = {
+        format: "yyyy-mm",
+        startView: "months",
+        minViewMode: "months",
+        autoclose: true,
+        language: 'zh-TW'
+    };
+
+    var optionYearDatepicker = {
+        format: "yyyy",
+        startView: "years",
+        minViewMode: "years",
+        autoclose: true,
+        language: 'zh-TW'
+    };
+
+    var rangetype = 'year';
+
+    function selectrange(type) {
+        rangetype = type;
+
+        $('#picker-range').empty();
+        var option = optionMonthDatepicker;
+        if (rangetype == 'year') {
+            option = optionYearDatepicker;
+        }
+
+        var $sInput = $('<input name="startDate" id="startDate" class="date-picker input-sm form-control" />');
+        $sInput.appendTo('#picker-range').datepicker(option);
+        var $sTo = $('<span class="input-group-addon"> ~ </span>');
+        $sTo.appendTo('#picker-range');
+        var $eInput = $('<input name="endDate" id="endDate" class="date-picker input-sm form-control" />');
+        $eInput.appendTo('#picker-range').datepicker(option);
+    }
+
+    var myLineChart = null;
+    function fillChart(data,datasets) {
+
+        if (myLineChart != null) {
+            myLineChart.destroy();
+            myLineChart = null;
+        }
+
+        var chartData = {
+            labels: data.header,
+            datasets:datasets
+        };
+
+        var chartOptions ={
+            responsive: true,
+            title:{
+                display:true,
+                text:'曲線圖'
+            },
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: '時間'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: '分數'
+                    }
+                }]
+            }
+        };
+
+        //-------------
+        //- LINE CHART -
+        //--------------
+
+        var ctx = document.getElementById("lineChart");
+
+        myLineChart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: chartOptions
+        });
+
+    }
+
+
+</script>
+</body>
+</html>

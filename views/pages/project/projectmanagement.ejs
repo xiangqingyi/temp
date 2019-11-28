@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../../layouts/header %>
+  <!-- DataTables -->
+  <link rel="stylesheet" href="../../plugins/datatables/dataTables.bootstrap.css">
+	<!-- Add fancyBox CSS -->
+	<link rel="stylesheet" type="text/css" href="../../plugins/fancyBox/source/jquery.fancybox.css?v=2.1.5" media="screen" />
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <% include ../../layouts/main-header %>
+
+  <% include ../../layouts/main-sidebar %>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        專案管理
+        <small>資料列表</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 首頁</a></li>
+        <li><a href="#">特殊專案</a></li>
+        <li class="active">專案管理</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">專案管理列表</h3>
+            </div>
+            <div class="row">
+              <div class="col-xs-6">
+                <div class="col-xs-2">
+                  <a href="/projectmanagement/add" type="button" class="btn btn-primary">新增</a>
+                </div>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="projects_datatable" class="table table-bordered table-striped table-hover" width="100%" >
+                  <thead>
+                      <tr>
+                          <th>專案名稱</th>
+                          <th>PM</th>
+                          <th>成員</th>
+                          <th>專案狀態</th>
+                          <th>立案日期</th>
+                          <th>結案日期</th>
+                          <th>操作</th>
+                      </tr>
+                  </thead>
+                  <tfoot>
+                      <tr>
+                          <th>專案名稱</th>
+                          <th>PM</th>
+                          <th>成員</th>
+                          <th>專案狀態</th>
+                          <th>立案日期</th>
+                          <th>結案日期</th>
+                          <th>操作</th>
+                      </tr>
+                  </tfoot>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <% include ../../layouts/Modal-del %>
+  
+  <% include ../../layouts/main-footer %>
+
+  <% include ../../layouts/control-sidebar %>
+  
+</div>
+<!-- ./wrapper -->
+
+  <% include ../../layouts/footer-JS %>
+    <!-- DataTables -->
+    <script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <!-- Add mousewheel plugin (this is optional) -->
+    <script type="text/javascript" src="../../plugins/fancyBox/lib/jquery.mousewheel.pack.js?v=3.1.3"></script>
+    <!-- Add fancyBox main JS -->
+    <script type="text/javascript" src="../../plugins/fancyBox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+    <!-- MyDataTable-->
+    <script src="../../dist/js/myDataTable.js"></script>
+    <!-- Common Func-->
+    <script src="../../dist/js/livestream_common.js"></script>
+    <!-- page script -->
+    <script>
+    $(function () {
+        // MyDataTable
+        $('#projects_datatable').myDataTable( {        
+          "ajax": '/projectmanagement/list',
+          "columns": [
+              { "data": "name" },
+              { "data": "pm.userName" },
+              { "data": "memberNames" },
+              { "data": "statusText" },
+              { "data": "startDate" },
+              { "data": "endDate" },
+              { "data": null }
+          ],
+          "operationCol":{
+            "show":true,
+            "editUrl":'/projectmanagement/edit/',
+            "delUrl":'/projectmanagement/del/'
+          },
+          "imgCol":{
+            "show":false
+          },
+            "columnDefs": [
+                {
+                    "targets": -2,
+                    "data": '_id',
+                    "render": function (data, type,full, row) {
+                        var html = "";
+                        if (data == null) {
+                            html = "<div class='row'><div class='col-xs-12'>";
+                            html += "<a id='"+full._id+"' href='#' class='btn btn-success' style='margin:0 5px;' onclick='closeProject(this)'>結案</a>";
+                            html += "</div></div>";
+                        } else {
+                            html = data;
+                        }
+                        return html;
+                    }
+                },{
+                    "targets": -1,
+                    "data": 'status',
+                    "render": function (data, type,full, row) {
+                        var html = "";
+                        if (full.status == 0) {
+                            html = "<div class='row'><div class='col-xs-12'>";
+                            html = "<a href='./projectmanagement/edit/"+full._id+"' class='btn btn-warning' style='margin:0 5px;'> 编辑</a>";
+                            html += "<a class='btn btn-danger' style='margin:0 5px;'";
+                            html += "onclick='commonFunc.dataTableDelSubmit(\"projectmanagement/del/"+full._id+"\",\"/projectmanagement\");'> 删除</a></div></div>";
+                        } else {
+                            html = "-";
+                        }
+                        return html;
+                    }
+                }
+            ]
+        } );
+    });
+
+    function closeProject(obj) {
+        commonFunc.showWarningMsgDialogDoThing('確認結案嗎？',function(){
+
+            var ajaxOptions = {type: 'POST',url: '/projectmanagement/close/' + obj.id}
+            var errorMSG = '結案失敗，請稍後再試。';
+
+            commonFunc.ajaxDataSubmit(obj.id,ajaxOptions,errorMSG,function(result){
+                commonFunc.showMsgDialogDoThing('成功！',function(){
+                    location.href = '/projectmanagement';
+                });
+            })
+        });
+        return false;
+    }
+
+
+    </script>    
+</body>
+</html>

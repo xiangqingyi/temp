@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../../layouts/header %>
+  <script type="text/javascript" src="../../plugins/jssor-slider/jssor.slider.min.js"></script>
+  <script type="text/javascript" src="../../plugins/css-element-queries/ResizeSensor.js"></script>
+  <script type="text/javascript" src="../../plugins/css-element-queries/ElementQueries.js"></script>
+  <style>
+    body.dragging, body.dragging * {
+      cursor: move !important;
+    }
+
+    .dragged {
+      position: absolute;
+      opacity: 0.5;
+      z-index: 2000;
+    }
+
+    .count_info_box_flag {
+      content: "";
+      width: 0;
+      height: 0;
+      border: 10px solid transparent;
+      border-left-color: orange;
+      border-right: none;
+      float:left;
+    }
+
+    .sorted_table_to tbody tr, .sorted_table_from tbody tr{
+      cursor: pointer;
+    }
+
+    .sorted_table_from thead tr {
+      cursor: ew-resize;
+    }
+
+    .context-menu-disabled {
+      opacity:.25;
+      text-decoration:line-through;
+    }
+
+    tr.ui-state-disabled {
+      cursor: not-allowed !important;
+      opacity:.25;
+      text-decoration:line-through;
+    }
+
+     #jssor_slider1_container{
+       cursor: ew-resize;
+     }
+    .sorted_table_to tr.placeholder {
+      display: block;
+      background: red;
+      position: relative;
+      margin: 0;
+      padding: 0;
+      border: none;
+    }
+
+    .range1 {
+      background-color : #595D9A;
+      color: #F6F6F6;
+    }
+    .range2 {
+      background-color : #165A99;
+      color: #F6F6F6;
+    }
+    .range3 {
+      background-color : #64AAE5;
+      color: #F6F6F6;
+    }
+    .range4 {
+      background-color : #8AADC0;
+      color: #F6F6F6;
+    }
+
+    .negative {
+      color:#DD4B39;
+    }
+    .sorted_table_to tr.placeholder:before {
+      content: "";
+      position: absolute;
+      width: 0;
+      height: 0;
+      border: 10px solid transparent;
+      border-left-color: red;
+      margin-top: -10px;
+      left: -10px;
+      border-right: none;
+    }
+  </style>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <% include ../../layouts/main-header %>
+
+  <% include ../../layouts/main-sidebar %>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <%= pageinfo.pageTitle %>
+        <small><%= pageinfo.titleDes %></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 首頁</a></li>
+        <li><a href="<%= pageinfo.breadcrumb2ndhref %>"><%= pageinfo.breadcrumb2ndTitle %></a></li>
+        <li class="active"><%= pageinfo.breadcrumb3rdTitle %></li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <div class="row">
+        <div class="col-xs-12">
+
+          <!-- general form elements -->
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title"><%= pageinfo.tableTitle %></h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+
+
+            <%
+
+              var aplusCountBase = pagestatus.params.yearRankPercent.aplusCountBase;
+              var acountBase = pagestatus.params.yearRankPercent.acountBase;
+              var bcountBase = pagestatus.params.yearRankPercent.bcountBase;
+              var ccountBase = pagestatus.params.yearRankPercent.ccountBase;
+
+              var aplusCount = pagestatus.params.yearRankPercent.type1APlus.realCount + pagestatus.params.yearRankPercent.type2APlus.realCount;
+              var acount = pagestatus.params.yearRankPercent.type1A.realCount + pagestatus.params.yearRankPercent.type2A.realCount;
+              var bcount = pagestatus.params.yearRankPercent.type1B.realCount + pagestatus.params.yearRankPercent.type2B.realCount;
+              var ccount = pagestatus.params.yearRankPercent.type1C.realCount + pagestatus.params.yearRankPercent.type2C.realCount;
+
+              var diffAPlusCount = aplusCountBase - aplusCount;
+              var diffACount = acountBase - acount;
+              var diffBCount = bcountBase - bcount;
+              var diffCCount = ccountBase - ccount;
+
+            %>
+
+              <div class="box-body">
+                <div class="form-group" id="count_info_box">
+                  <div class="row">
+                    <div id="range_aplus_count_top" class="col-xs-3">
+                      <label>人數 <%=aplusCountBase%> 剩餘  <font id="diff_range_aplus_count_top"><%=diffAPlusCount%></font>  人</label>
+                    </div>
+                    <div id="range_a_count_top" class="col-xs-3">
+                      <label>人數 <%=acountBase%> 剩餘  <font id="diff_range_a_count_top"><%=diffACount%></font>  人</label>
+                    </div>
+                    <div id="range_b_count_top" class="col-xs-3">
+                      <label>人數 <%=bcountBase%> 剩餘  <font id="diff_range_b_count_top"><%=diffBCount%></font>  人</label>
+                    </div>
+                    <div id="range_c_count_top" class="col-xs-3">
+                      <label>人數 <%=ccountBase%> 剩餘  <font id="diff_range_c_count_top"><%=diffCCount%></font>  人</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div id="jssor_slider1_container" style="position:relative;top:0px;left:0px;width:1000px;height:500px;">
+                    <div id="jssor_slider1_slides" u="slides" style="position:absolute;overflow:hidden;left:0px;top:0px;width:1000px;height:500px;">
+
+
+                      <%
+                          var scoreArray = pagestatus.params.scoreArray;
+                          var cssClass = "";
+                      for (var idx = 0, len = scoreArray.length; idx < len; idx++) {
+                        var team = scoreArray[idx];
+                        %>
+                      <div>
+                        <table class="table table-bordered table-hover sorted_table_from" >
+                          <thead>
+                          <tr>
+                            <td colspan="2"><b><%=team.name%></b></td>
+                          </tr>
+                          <tr>
+                            <td>名次</td>
+                            <td>姓名</td>
+                          </tr>
+                          </thead>
+
+                          <%
+                            team.members.forEach(function (row) {
+                              cssClass = (row.managerRank > 0 ? 'ui-state-disabled' : '');
+                          %>
+                          <tr data-row-id="<%=row.account%>" data-row-name="<%=row.name%>" data-row-rank="<%=row.rank%>" class="<%=cssClass%>">
+                            <td class="range<%=row.rank%>" ><%=row.rankPosition%></td><td><%=row.name%></td>
+                          </tr>
+                          <%
+                            });
+                          %>
+                        </table>
+                      </div>
+                        <%
+                      }
+                      %>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group" id="manager_modify">
+                  <div class="row">
+                    <div class="col-xs-3">
+                      <label>人數 <%=aplusCountBase%> 剩餘 <font id="diff_range_aplus_count_bottom"><%=diffAPlusCount%></font>  人</label>
+                      <table id="range_aplus" class="table table-bordered table-striped table-hover sorted_table_to" width="100%" >
+                        <thead>
+                        <tr>
+                          <td  class="range1" colspan="2">A+</td>
+                        </tr>
+                        <tr>
+                          <td>名次</td>
+                          <td>姓名</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <%
+                        pagestatus.params.aplusList.forEach(function (row) {
+                        %>
+                        <tr data-row-id="<%=row.account%>" data-row-name="<%=row.name%>" data-row-rank="<%=row.rank%>">
+                          <td class="range<%=row.rank%>" ><%=row.rankPosition%></td><td><%=row.name%></td>
+                        </tr>
+                        <%
+                        });
+                        %>
+
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="col-xs-3">
+                      <label>人數 <%=acountBase%> 剩餘 <font id="diff_range_a_count_bottom"><%=diffACount%></font>  人</label>
+                      <table id="range_a"  class="table table-bordered table-striped table-hover sorted_table_to" width="100%" >
+                        <thead >
+                        <tr>
+                          <td class="range2" colspan="2">A</td>
+                        </tr>
+                        <tr>
+                          <td>名次</td>
+                          <td>姓名</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <%
+                        pagestatus.params.alist.forEach(function (row) {
+                        %>
+                        <tr data-row-id="<%=row.account%>" data-row-name="<%=row.name%>" data-row-rank="<%=row.rank%>">
+                          <td class="range<%=row.rank%>" ><%=row.rankPosition%></td><td><%=row.name%></td>
+                        </tr>
+                        <%
+                        });
+                        %>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="col-xs-3">
+                      <label>人數 <%=bcountBase%> 剩餘 <font id="diff_range_b_count_bottom"><%=diffBCount%></font>  人</label>
+                      <table id="range_b"  class="table table-bordered table-striped table-hover sorted_table_to" width="100%" >
+                        <thead >
+                        <tr>
+                          <td class="range3" colspan="2">B</td>
+                        </tr>
+                        <tr>
+                          <td>名次</td>
+                          <td>姓名</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <%
+                        pagestatus.params.blist.forEach(function (row) {
+                        %>
+                        <tr data-row-id="<%=row.account%>" data-row-name="<%=row.name%>" data-row-rank="<%=row.rank%>">
+                          <td class="range<%=row.rank%>" ><%=row.rankPosition%></td><td><%=row.name%></td>
+                        </tr>
+                        <%
+                        });
+                        %>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="col-xs-3">
+                      <label>人數 <%=ccountBase%> 剩餘 <font id="diff_range_c_count_bottom"><%=diffCCount%></font>  人</label>
+                      <table id="range_c"  class="table table-bordered table-striped table-hover sorted_table_to" width="100%" >
+                        <thead >
+                        <tr>
+                          <td class="range4" colspan="2">C</td>
+                        </tr>
+                        <tr>
+                          <td>名次</td>
+                          <td>姓名</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <%
+                        pagestatus.params.clist.forEach(function (row) {
+                        %>
+                        <tr data-row-id="<%=row.account%>" data-row-name="<%=row.name%>" data-row-rank="<%=row.rank%>">
+                          <td class="range<%=row.rank%>" ><%=row.rankPosition%></td><td><%=row.name%></td>
+                        </tr>
+                        <%
+                        });
+                        %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer">
+                <button id="submit" type="submit" class="btn btn-success">存檔</button>
+                <a href="/yearsettlement" class="btn btn-danger">取消</a>
+              </div>
+          </div>
+          <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <% include ../../layouts/main-footer %>
+
+  <% include ../../layouts/control-sidebar %>
+  
+</div>
+<!-- ./wrapper -->
+
+  <% include ../../layouts/footer-JS %>
+<script type="text/javascript" src="../../plugins/bootstrap-menu/BootstrapMenu.min.js"></script>
+<script type="text/javascript" src="../../plugins/jquery-sortable/jquery-sortable.js"></script>
+<!-- Add fancyBox main JS -->
+<script type="text/javascript" src="../../plugins/fancyBox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+<!-- Common Func-->
+<script src="../../dist/js/livestream_common.js"></script>
+<script>
+    $('#jssor_slider1_container').width($('#count_info_box').width());
+    $('#jssor_slider1_slides').width($('#count_info_box').width());
+
+    var SlideSpacing = 3;
+
+    var jssor_slider1;
+    jssor_slider1_init = function (containerId) {
+        var options = {
+            $AutoPlay: 0 ,
+            $Cols: 10,
+
+            $ArrowKeyNavigation: true,
+            $SlideDuration: 180,
+            $SlideWidth: 180,
+            $SlideSpacing: SlideSpacing
+        };
+        jssor_slider1 = new $JssorSlider$(containerId, options);
+
+        //加入事件
+        jssor_slider1.$On($JssorSlider$.$EVT_POSITION_CHANGE, SlidePositionChangeEventHandler);
+    };
+
+    //Slide變動
+    function SlidePositionChangeEventHandler(position, fromPosition)
+    {
+        position_int = Math.floor(position);
+        resetContentHeight();
+    }
+
+</script>
+<script>
+
+    var max_height = 0;
+    var sorted_table_from_height = [];
+    var display_count = 0;
+    var position_int = 0;
+
+    jssor_slider1_init("jssor_slider1_container");
+
+    //大小變動
+    new ResizeSensor(jQuery('#count_info_box'), function(){
+
+        $('#jssor_slider1_container').width($('#count_info_box').width());
+        $('#jssor_slider1_slides').width($('#count_info_box').width());
+
+        //計算顯示數量
+        display_count = Math.floor($('#count_info_box').width() / ($('.sorted_table_from:first-child').width() + SlideSpacing)) + 1;
+        //重設高度
+        resetContentHeight();
+    });
+
+    function test(row) {
+        if (true) {
+            return 'Edit ' + row.name;
+        }
+        return '<i>Not editable</i>';
+    }
+
+    var menu = new BootstrapMenu('#jssor_slider1_slides >> table > tbody > tr:not(.ui-state-disabled)', {
+        fetchElementData: function($rowElem) {
+            var returnData = {'account':$rowElem.data('rowId'),'name':$rowElem.data('rowName'),'rank':$rowElem.data('rowRank')}
+            return returnData;
+        },
+        actionsGroups: [
+            ['SelectTitle'],
+            ['SelectAPlus','SelectA','SelectB','SelectC']
+        ],
+        actions: {
+            SelectTitle : {
+                name: function(row) {
+                    return "將【"+ row.name + "】變更為：";
+                },
+                isEnabled: function(row) {
+                    return false;
+                }
+            }
+            ,SelectAPlus : {
+                name: 'A+',
+                onClick: function (row) {
+                    moveTo(row.account,'aplus');
+                },
+                classNames: function(row) {
+                    return { 'context-menu-disabled': row.rank == '1' };
+                },
+                isEnabled: function(row) {
+                    return row.rank != '1';
+                }
+            }
+            ,SelectA : {
+                name: 'A',
+                onClick: function(row) {
+                    moveTo(row.account,'a');
+                },
+                classNames: function(row) {
+                    return { 'context-menu-disabled': row.rank == '2' };
+                },
+                isEnabled: function(row) {
+                    return row.rank != '2';
+                }
+            }
+            ,SelectB : {
+                name: 'B',
+                onClick: function (row) {
+                    moveTo(row.account,'b');
+                },
+                classNames: function(row) {
+                    return { 'context-menu-disabled': row.rank == '3' };
+                },
+                isEnabled: function(row) {
+                    return row.rank != '3';
+                }
+            }
+            , SelectC : {
+                name: 'C',
+                onClick: function(row) {
+                    moveTo(row.account,'c');
+                },
+                classNames: function(row) {
+                    return { 'context-menu-disabled': row.rank == '4' };
+                },
+                isEnabled: function(row) {
+                    return row.rank != '4';
+                }
+            }
+        }
+    });
+
+    function moveTo(account,range) {
+        var item = $("tr[data-row-id='"+account+"']");
+        item.clone().addClass("ui-state-disabled").insertAfter(item);
+
+        $("tr[data-row-id='"+account+"']")
+
+        $('#range_'+range +' > tbody').prepend(item);
+
+        calculateCount();
+    }
+
+    <!--微調前的原始數量-->
+    var aplusCount = 0;
+    var acount = 0;
+    var bcount = 0;
+    var ccount = 0;
+
+    <!--百分比算出的配額數量-->
+    var aplusCountBase = parseInt('<%=aplusCountBase%>',10);
+    var acountBase = parseInt('<%=acountBase%>',10);
+    var bcountBase = parseInt('<%=bcountBase%>',10);
+    var ccountBase = parseInt('<%=ccountBase%>',10);
+
+    $(function() {
+        var adjustment;
+        var tempDivId;
+        var addFlag = false;
+        $('.sorted_table_to').sortable({
+            group: 'tablegroup',
+            containerSelector: 'table',
+            itemPath: '> tbody',
+            itemSelector: 'tr',
+            exclude: '.ui-state-disabled',
+            placeholder: '<tr class="placeholder"/>',
+            onDragStart: function ($item, container, _super) {
+                if(!container.options.drop)
+                    $item.clone().addClass("ui-state-disabled").insertAfter($item);
+                _super($item, container);
+            },
+            afterMove:function ($placeholder, container, $closestItemOrContainer) {
+                var divid = ''
+                if ($closestItemOrContainer.context.tagName == 'TABLE') {
+                    //console.info($closestItemOrContainer.context.id);
+                    divid = $closestItemOrContainer.context.id + '_count_top';
+                } else if ($closestItemOrContainer.context.tagName == 'TR') {
+                    //console.info(container.target.context.id);
+                    divid = container.target.context.id + '_count_top';
+                }
+                removeCountInfoBoxFlag();
+                //$('#'+divid + ' > label').text('['+$('#'+divid + ' > label').text()+']');
+
+                $('#'+divid).prepend('<div class="count_info_box_flag"></div>')
+
+
+            },
+            onDrop: function($item, container, _super) {
+                removeCountInfoBoxFlag();
+                calculateCount();
+                _super($item, container);
+            }
+        });
+
+        $('.sorted_table_from').sortable({
+            group: 'tablegroup',
+            drop: false,
+            containerSelector: 'table',
+            itemPath: '> tbody',
+            itemSelector: 'tr',
+            exclude: '.ui-state-disabled',
+            placeholder: '<tr class="placeholder"/>'
+        } );
+
+        //整理高度集合
+        $(".sorted_table_from").each(function(){
+            sorted_table_from_height.push($(this).height());
+        });
+        var temp = sorted_table_from_height;
+        for (var i = 0, len = temp.length; i < len; i++) {
+            sorted_table_from_height.push(temp[i]);
+        }
+
+        //計算顯示數量
+        display_count = Math.floor($('#count_info_box').width() / ($('.sorted_table_from:first-child').width() + SlideSpacing)) + 1;
+        //重設高度
+        resetContentHeight();
+
+        aplusCount =  $('.sorted_table_from > tbody > tr > td.range1').length;
+        acount =  $('.sorted_table_from > tbody > tr > td.range2').length;
+        bcount =  $('.sorted_table_from > tbody > tr > td.range3').length;
+        ccount =  $('.sorted_table_from > tbody > tr > td.range4').length;
+
+
+        //移除舊版本瀏覽器不支援的transform
+        $('.sorted_table_from > tbody > tr > td').each(function() {
+            $(this).css('transform','none');
+        });
+        $('.sorted_table_from > tbody > tr').each(function() {
+            $(this).css('transform','none');
+        });
+        $('.sorted_table_from > tbody').each(function() {
+            $(this).css('transform','none');
+        });
+
+        calculateCount();
+    });
+
+    function removeCountInfoBoxFlag() {
+        $('.count_info_box_flag').remove();
+    }
+
+    function resetContentHeight() {
+        var temp_max_height = 0;
+        for (var i = position_int; i < position_int + display_count; i++) {
+            if (sorted_table_from_height[i] > temp_max_height) {
+                temp_max_height = sorted_table_from_height[i] + 10;
+            }
+        }
+        if (temp_max_height != max_height) {
+            max_height = temp_max_height;
+
+            $('#jssor_slider1_container').height(max_height);
+            $('#jssor_slider1_slides').height(max_height);
+
+            $('#jssor_slider1_slides > div').each(function(){
+                $(this).height(max_height);
+            });
+        }
+    }
+
+    function calculateCount() {
+
+        <!--主管微調數量-->
+        var managerAplusCount = $('#range_aplus > tbody > tr').length;
+        var managerACount = $('#range_a > tbody > tr').length;
+        var managerBCount = $('#range_b > tbody > tr').length;
+        var managerCCount = $('#range_c > tbody > tr').length;
+
+        <!--計算增加的數量-->
+        var tempAplusCount = aplusCount + managerAplusCount;
+        var tempACount = acount + managerACount;
+        var tempBCount = bcount + managerBCount;
+        var tempCCount = ccount + managerCCount;
+
+        <!--減去原本微調前的的數量-->
+        $('#manager_modify > div > div > table > tbody > tr').each(function() {
+            switch($(this).data('rowRank')) {
+                case 1:
+                    tempAplusCount--;
+                    break;
+                case 2:
+                    tempACount--;
+                    break;
+                case 3:
+                    tempBCount--;
+                    break;
+                case 4:
+                    tempCCount--;
+                    break;
+            }
+        });
+
+        <!--配額減去最後的數量算出尚可配置的餘額-->
+        var diffAPlusCount = aplusCountBase - tempAplusCount;
+        var diffACount = acountBase - tempACount;
+        var diffBCount = bcountBase - tempBCount;
+        var diffCCount = ccountBase - tempCCount;
+
+        if (diffAPlusCount < 0) {
+            $('#diff_range_aplus_count_top').addClass('negative');
+            $('#diff_range_aplus_count_bottom').addClass('negative');
+        } else {
+            $('#diff_range_aplus_count_top').removeClass('negative');
+            $('#diff_range_aplus_count_bottom').removeClass('negative');
+        }
+        if (diffACount < 0) {
+            $('#diff_range_a_count_top').addClass('negative');
+            $('#diff_range_a_count_bottom').addClass('negative');
+        } else {
+            $('#diff_range_a_count_top').removeClass('negative');
+            $('#diff_range_a_count_bottom').removeClass('negative');
+        }
+        if (diffBCount < 0) {
+            $('#diff_range_b_count_top').addClass('negative');
+            $('#diff_range_b_count_bottom').addClass('negative');
+        } else {
+            $('#diff_range_b_count_top').removeClass('negative');
+            $('#diff_range_b_count_bottom').removeClass('negative');
+        }
+        if (diffCCount < 0) {
+            $('#diff_range_c_count_top').addClass('negative');
+            $('#diff_range_c_count_bottom').addClass('negative');
+        } else {
+            $('#diff_range_c_count_top').removeClass('negative');
+            $('#diff_range_c_count_bottom').removeClass('negative');
+        }
+
+        $('#diff_range_aplus_count_top').text(diffAPlusCount);
+        $('#diff_range_aplus_count_bottom').text(diffAPlusCount);
+
+        $('#diff_range_a_count_top').text(diffACount);
+        $('#diff_range_a_count_bottom').text(diffACount);
+
+        $('#diff_range_b_count_top').text(diffBCount);
+        $('#diff_range_b_count_bottom').text(diffBCount);
+
+        $('#diff_range_c_count_top').text(diffCCount);
+        $('#diff_range_c_count_bottom').text(diffCCount);
+
+    }
+
+    var ModifyData = function (account,from_rank,to_rank) {
+        this.account = account+'';
+        this.managerRank = to_rank;
+        this.rank = from_rank;
+    };
+
+    $('#submit').on('click',function(){
+        commonFunc.showWarningMsgDialogDoThing('確認存檔嗎？',function(){
+            var ajaxOptions = {type: 'PUT',url: '/yearsettlement/modifyrank/<%=pagestatus.params.id%>',contentType:'application/json'}
+
+            //重新計算tableDate
+            var tableData = [];
+
+            $('#range_aplus > tbody > tr').each(function(){
+                tableData.push(new ModifyData($(this).data('rowId'),$(this).data('rowRank'),1));
+            });
+
+            $('#range_a > tbody > tr').each(function(){
+                tableData.push(new ModifyData($(this).data('rowId'),$(this).data('rowRank'),2));
+            });
+
+            $('#range_b > tbody > tr').each(function(){
+                tableData.push(new ModifyData($(this).data('rowId'),$(this).data('rowRank'),3));
+            });
+
+            $('#range_c > tbody > tr').each(function(){
+                tableData.push(new ModifyData($(this).data('rowId'),$(this).data('rowRank'),4));
+            });
+
+            //組送出的物件
+            var submitData = {
+                dataArray:tableData
+            }
+            console.log(submitData);
+
+            var errorMSG = '存檔失敗，請稍後再試。';
+
+            commonFunc.ajaxDataSubmit(JSON.stringify(submitData),ajaxOptions,errorMSG,function(result){
+                commonFunc.showMsgDialogDoThing('存檔成功！',function(){
+                    location.href = '/yearsettlement';
+                });
+            })
+        });
+        return false;
+    });
+
+
+</script>
+
+</body>
+</html>

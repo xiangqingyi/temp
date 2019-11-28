@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Select2 -->
+  <link rel="stylesheet" href="../../plugins/select2/select2.min.css">
+
+  <% include ../../layouts/header %>
+  <!-- DataTables -->
+  <link rel="stylesheet" href="../../plugins/datatables/dataTables.bootstrap.css">
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <% include ../../layouts/main-header %>
+
+  <% include ../../layouts/main-sidebar %>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <%= pageinfo.pageTitle %>
+        <small><%= pageinfo.titleDes %></small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 首頁</a></li>
+        <li><a href="<%= pageinfo.breadcrumb2ndhref %>"><%= pageinfo.breadcrumb2ndTitle %></a></li>
+        <li class="active"><%= pageinfo.breadcrumb3rdTitle %></li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+
+          <!-- general form elements -->
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <div class="col-xs-7 col-sm-8 col-md-9 col-lg-10">
+                <h3 class="box-title"><%= pageinfo.tableTitle %></h3>
+              </div>
+              <div class="col-xs-5 col-sm-4 col-md-3 col-lg-2">
+                <div class="pull-right">
+                  <button id="member_submit" type="submit" class="btn btn-success">存檔</button>
+                  <a href="/member" class="btn btn-danger">取消</a>
+                </div>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+              <%
+              var nowUserId = pagestatus.userID;
+              var formAction = pagestatus.type || 'add';
+              var edit_disabled = '';
+              var jsRender = '';
+              var ajax_modify_options = {type: 'POST',url: '/member/addnewrow'};
+              if(formAction == 'edit'){
+                formAction = formAction + "/" + pagestatus.params._id;
+                edit_disabled = 'disabled';
+                jsRender = '"ajax": "/member/editlist/' + pagestatus.params._id + '",';
+                ajax_modify_options = {type: 'POST',url: '/member/edit/' + pagestatus.params._id};
+              }
+
+              %>
+            <form id="team_member_form" role="form" action="/member/<%= formAction %>" method="post">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="member_name">團隊名稱</label>
+                  <input type="text" class="form-control" id="member_name" name="name" placeholder="請輸入名稱" value="<%= pagestatus.params.name %>">
+                </div>
+                <div class="form-group">
+                  <label for="member_key">團隊主管</label>
+                  <select id="leader_select" name="leaderId" class="form-control select2">
+                    <option value="">--- 請選擇 ---</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <div class="col-xs">
+                    <label for="account_status">狀態</label>
+                  </div>
+                  <div class="col-xs">
+                      <%
+                      var temp_checked = '';
+                      for(key in pagestatus.TEAM_STATUS){
+                        if(key == (pagestatus.params.status) ) {
+                          temp_checked = 'checked';
+                        }else{
+                          temp_checked = '';
+                        }
+                      %>
+                    <div class="col-xs-2">
+                      <input type="radio" name="status" value="<%= key %>" <%= temp_checked %> > <%= pagestatus.TEAM_STATUS[key] %>
+                    </div>
+                      <% } %>
+                  </div>
+                </div>
+              </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+              </div>
+            </form>
+          </div>
+          <!-- /.box -->
+
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">成員</h3>
+            </div>
+            <div class="row">
+              <div class="col-xs-8">
+                <div class="col-xs-6">
+                  <select id="account_select" class="form-control select2" multiple="multiple" data-placeholder="請選擇人員帳號">
+                    <option value="">--- 請選擇 ---</option>
+                  </select>
+                </div>
+                <div class="col-xs-2">
+                  <a id="DataTableBodyAdd" href="#" type="button" class="btn btn-primary">新增</a>
+                </div>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="member_datatable" class="table table-bordered table-striped table-hover" >
+                <thead>
+                <tr>
+                  <th>姓名</th>
+                  <th>帳號</th>
+                  <th>操作</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                  <th>姓名</th>
+                  <th>帳號</th>
+                  <th>操作</th>
+                </tr>
+                </tfoot>
+              </table>
+            </div>
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <% include ../../layouts/main-footer %>
+
+  <% include ../../layouts/control-sidebar %>
+  
+</div>
+<!-- ./wrapper -->
+
+<% include ../../layouts/footer-JS %>
+<!-- DataTables -->
+<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+<!-- Add fancyBox main JS -->
+<script type="text/javascript" src="../../plugins/fancyBox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+<!-- MyDataTable-->
+<script src="../../dist/js/myDataTable.js"></script>
+<!-- Common Func-->
+<script src="../../dist/js/livestream_common.js"></script>
+<!-- iCheck -->
+<script src="../../plugins/iCheck/icheck.min.js"></script>
+<!-- page script -->
+<!-- Select2 -->
+<script src="../../plugins/select2/select2.full.min.js"></script>
+<script src="../../plugins/select2/i18n/zh-TW.js"></script>
+
+<!-- myValidate-->
+<script src="../../dist/js/myValidate.js"></script>
+
+<script>
+    var leaderId = '<%= (pagestatus.params.leader == null? "": pagestatus.params.leader.id) %>';
+    var selectObjData;
+    //處理下拉選單資料
+    $.ajax({
+        type: 'GET',
+        url: '/account/listExcludeAdmin',
+        dataType: 'json'
+    }).done(function(result){
+        if(result.error == 0){
+//            console.log(result);
+            selectObjData = result.data;
+            var selObj = $("#leader_select");
+            $.each(selectObjData,function(){
+                var id = this._id;
+                var text= this.userName + "【" + this.account + "】";
+                var appendValue =
+                    selObj.append("<option value='"+id+"'>"+text+"</option>");
+            });
+            selObj.val(leaderId);
+
+            selObj = $("#account_select");
+            $.each(selectObjData,function(){
+                var id = this._id;
+                var text=this.userName+ "【" + this.account + "】";
+                var appendValue =
+                    selObj.append("<option value='"+id+"'>"+text+"</option>");
+            });
+        }else{
+            console.log('Done:'+result.message);
+            commonFunc.showErrMsgDialogWithNoting('下拉選讀取數據失敗，請稍後再試。');
+        }
+    }).fail(function( jqXHR, textStatus, errorThrown){
+        console.log('Fail:'+errorThrown);
+        commonFunc.showErrMsgDialogWithNoting('下拉選讀取數據失敗，請稍後再試。');
+    });
+
+    var tableData = [];
+    var tables;
+
+    $(function () {
+        // MyDataTable
+        $('#member_datatable').myDataTable( {
+            <%- jsRender %>
+            "initComplete": function(settings, json) {
+                //記錄ajax載入Table的值
+                this.DataTable().data().each(function(d){
+                    tableData.push(d);
+                });
+                //載入tables
+                tables = this.DataTable();
+            },
+            "drawCallback": function(settings) {
+                //加入刪除Btn事件
+                $('.TableDeleteBtn').unbind('click').on( 'click', function () {
+                    tables.row($(this).parents('tr')).remove().draw(false);
+                } );
+            },             
+            "columns": [
+                { "data": "userName" },
+                { "data": "account" },
+                { "data": null }
+            ],
+            "operationCol":{
+                "show":true,
+                "type":'BodyDelete'
+            },
+            "imgCol":{
+                "show":false
+            }
+        } );
+
+        //增加Row
+        $('#DataTableBodyAdd').on( 'click', function () {
+            var selectedItem = $("#account_select option:selected");
+            if(selectedItem.length == 0){
+                commonFunc.showErrMsgDialogWithNoting('請選擇人員帳號');
+                return false;
+            }else{
+                var isSelected = false;
+
+                var selectedText;
+                var selectedValue;
+
+                var selectDup = [];
+
+                $.each(selectedItem, function(index,element) {
+                    selectedText = element.text;
+                    selectedValue = element.value;
+
+                    //check seleted
+                    tables.data().each(function(row){
+                        if(row._id == selectedValue){
+                            selectDup.push(selectedText);
+                            if (!isSelected) {
+                                isSelected = true;
+                            }
+                        }
+                    });
+                });
+
+                if(isSelected) {
+                    commonFunc.showErrMsgDialogWithNoting(selectDup + '已加入，請重新選擇！');
+                    return false;
+                }
+
+                $.each(selectedItem, function(index,element) {
+                  $.each(selectObjData,function(){
+                      if(this._id == element.value){
+                          tables.row.add(this).draw(false);
+                          tableData.push(this);
+                      }
+                  });
+                });
+
+                $("#account_select.select2").select2().val(null).trigger("change");
+
+                return false;
+            }
+        });
+
+
+        $('#team_member_form').myValidate({
+            rules: {
+                'name': "required",
+                'leaderId': "required",
+                status: "required",
+            }
+        },submitFun);
+
+        //送出
+        $('#member_submit').on('click',function(){
+            $("#team_member_form").submit();
+            return false;
+        });
+
+        //Initialize Select2 Elements
+        $(".select2").select2({
+            language: "zh-TW"
+        });
+
+        return false;
+    });
+
+    //iCheck
+    $(function () {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' // optional
+        });
+    });
+
+    $('#score_save').on('click',function(){
+        commonFunc.showWarningMsgDialogDoThing('確認存檔嗎？',function(){
+            var ajaxOptions = {type: 'PUT',url: '/projectscore/givescore/' + dataId,contentType:'application/json'}
+
+            var tables = $('#score_datatable').DataTable();
+
+            //重新計算tableDate
+            tableData = [];
+            tables.data().each(function(d){
+                tableData.push(d);
+            });
+
+            $.each(tables.rows()[0],function(index,value){
+                tableData[index].score = $('#'+index+' option:selected').val();
+            })
+
+            //組送出的物件
+            var submitData = {
+                score:tableData
+            }
+
+            var errorMSG = '存檔失敗，請稍後再試。';
+
+            commonFunc.ajaxDataSubmit(JSON.stringify(submitData),ajaxOptions,errorMSG,function(result){
+                commonFunc.showMsgDialogDoThing('存檔成功！',function(){
+                    location.href = '/projectscore';
+                });
+            })
+        });
+        return false;
+    });
+
+
+    var submitFun = function() {
+        commonFunc.showWarningMsgDialogDoThing('確認存檔嗎？',function(){
+            var ajaxOptions = JSON.parse('<%- JSON.stringify(ajax_modify_options) %>');
+
+            //重新計算tableDate
+            tableData = [];
+            tables.data().each(function(d){
+                tableData.push(d);
+            });
+
+            //組送出的物件
+            var submitData = {
+                form:$("#team_member_form").serializeObject(),
+                memberArray:tableData
+            }
+            console.log(submitData);
+
+            var errorMSG = '新增失敗，請稍後再試。';
+
+            commonFunc.ajaxDataSubmit(submitData,ajaxOptions,errorMSG,function(result){
+                location.href = '/member';
+            })
+        });
+        return false;
+    }
+
+
+</script>
+
+</body>
+</html>

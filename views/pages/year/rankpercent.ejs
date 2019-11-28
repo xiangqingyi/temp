@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../../layouts/header %>
+  <!-- DataTables -->
+  <link rel="stylesheet" href="../../plugins/datatables/dataTables.bootstrap.css">
+	<!-- Add fancyBox CSS -->
+	<link rel="stylesheet" type="text/css" href="../../plugins/fancyBox/source/jquery.fancybox.css?v=2.1.5" media="screen" />
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <% include ../../layouts/main-header %>
+
+  <% include ../../layouts/main-sidebar %>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        人數設定
+        <small>資料列表</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 首頁</a></li>
+        <li><a href="#">年度結算</a></li>
+        <li class="active">查看人數設定</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title"><%=pagestatus.params.data.year %> 年 人數設定列表 共<%=pagestatus.params.data.total %>人</h3>
+            </div>
+            <div class="row">
+              <div class="col-xs-6">
+                <div class="col-xs-2">
+
+                </div>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+
+              <%
+                var type1APlus = pagestatus.params.data.type1APlus;
+                var type1A = pagestatus.params.data.type1A;
+                var type1B = pagestatus.params.data.type1B;
+                var type1C = pagestatus.params.data.type1C;
+
+                var type2APlus = pagestatus.params.data.type2APlus;
+                var type2A = pagestatus.params.data.type2A;
+                var type2B = pagestatus.params.data.type2B;
+                var type2C = pagestatus.params.data.type2C;
+
+              %>
+
+
+              <div class="box-group" id="accordion">
+                <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
+                <div class="panel box box-primary">
+                  <div class="box-header with-border">
+                    <h4 class="box-title">
+                      <a data-parent="#accordion">
+                        師1-3 (個別總人數:<%=pagestatus.params.data.type1Count %>人)
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="collapseOne" class="panel-collapse collapse in">
+                    <div class="box-body">
+
+                      <table id="rankPercent_datatable1" class="table table-bordered table-striped table-hover" width="100%" >
+                        <thead>
+                        <tr>
+                          <td></td>
+                          <td>百分比(%)</td>
+                          <td>百分比人數(人)</td>
+                          <td>實際人數(人)</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                          <td><%=type1APlus.rank%></td>
+                          <td><%=type1APlus.percent%></td>
+                          <td><%=type1APlus.count%></td>
+                          <td><%=type1APlus.realCount%></td>
+                        </tr>
+                        <tr>
+                          <td><%=type1A.rank%></td>
+                          <td><%=type1A.percent%></td>
+                          <td><%=type1A.count%></td>
+                          <td><%=type1A.realCount%></td>
+                        </tr>
+                        <tr>
+                          <td><%=type1B.rank%></td>
+                          <td><%=type1B.percent%></td>
+                          <td><%=type1B.count%></td>
+                          <td><%=type1B.realCount%></td>
+                        </tr>
+                        <tr>
+                          <td><%=type1C.rank%></td>
+                          <td><%=type1C.percent%></td>
+                          <td><%=type1C.count%></td>
+                          <td><%=type1C.realCount%></td>
+                        </tr>
+                        </tbody>
+                      </table>
+
+                    </div>
+                  </div>
+                </div>
+                <div class="panel box box-danger">
+                  <div class="box-header with-border">
+                    <h4 class="box-title">
+                      <a data-parent="#accordion">
+                        師4-以上 (個別總人數:<%=pagestatus.params.data.type2Count %>人)
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="collapseTwo" class="panel-collapse collapse in">
+                    <div class="box-body">
+
+                      <table id="rankPercent_datatable2" class="table table-bordered table-striped table-hover" width="100%" >
+                        <thead>
+                        <tr>
+                          <td></td>
+                          <td>百分比(%)</td>
+                          <td>百分比人數(人)</td>
+                          <td>實際人數(人)</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                          <td><%=type2APlus.rank%></td>
+                          <td><%=type2APlus.percent%></td>
+                          <td><%=type2APlus.count%></td>
+                          <td><%=type2APlus.realCount%></td>
+                        </tr>
+                        <tr>
+                          <td><%=type2A.rank%></td>
+                          <td><%=type2A.percent%></td>
+                          <td><%=type2A.count%></td>
+                          <td><%=type2A.realCount%></td>
+                        </tr>
+                        <tr>
+                          <td><%=type2B.rank%></td>
+                          <td><%=type2B.percent%></td>
+                          <td><%=type2B.count%></td>
+                          <td><%=type2B.realCount%></td>
+                        </tr>
+                        <tr>
+                          <td><%=type2C.rank%></td>
+                          <td><%=type2C.percent%></td>
+                          <td><%=type2C.count%></td>
+                          <td><%=type2C.realCount%></td>
+                        </tr>
+                        </tbody>
+                      </table>
+
+                    </div>
+                  </div>
+                </div>
+
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <% include ../../layouts/Modal-del %>
+  
+  <% include ../../layouts/main-footer %>
+
+  <% include ../../layouts/control-sidebar %>
+  
+</div>
+<!-- ./wrapper -->
+
+  <% include ../../layouts/footer-JS %>
+    <!-- DataTables -->
+    <script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <!-- Add mousewheel plugin (this is optional) -->
+    <script type="text/javascript" src="../../plugins/fancyBox/lib/jquery.mousewheel.pack.js?v=3.1.3"></script>
+    <!-- Add fancyBox main JS -->
+    <script type="text/javascript" src="../../plugins/fancyBox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+    <!-- MyDataTable-->
+    <script src="../../dist/js/myDataTable.js"></script>
+    <!-- Common Func-->
+    <script src="../../dist/js/livestream_common.js"></script>
+    <!-- page script -->
+
+<script>
+
+//    $(function () {
+//        var option = {
+//            "operationCol":{
+//                "show":false,
+//                "editUrl":'/monthscore/edit/',
+//                "delUrl":'/monthscore/del/'
+//            },
+//            "imgCol":{
+//                "show":false
+//            },
+//            "searching": false,
+//            "ordering": false,
+//            "lengthChange": false,
+//            "info": false,
+//            "paging": false
+//        };
+//        $('#rankPercent_datatable1').myDataTable(option);
+//        $('#rankPercent_datatable2').myDataTable(option);
+//    });
+</script>
+</body>
+</html>

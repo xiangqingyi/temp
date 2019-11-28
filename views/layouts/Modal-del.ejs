@@ -1,0 +1,32 @@
+  <!-- trigger delModal -->
+  <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="delModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title" id="delModalLabel">確認刪除嗎？</h4>
+          <input type="hidden" id="delModal_url" value="">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-danger" onclick="confirmDel()">確認</button>
+        </div>
+      </div>
+    </div>
+  </div>  
+<script>
+function triggerDelModal(url){
+    $('#delModal_url').val(url);
+    $('#delModal').modal();  
+}
+
+function confirmDel(){  
+    var url = $('#delModal_url').val();
+    if(url){
+    location.href=url;   
+    }else{
+    alert('參數錯誤，刪除錯誤');
+    $('#delModal').modal('hide')
+    }
+}     
+</script>    
