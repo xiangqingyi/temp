@@ -27,7 +27,7 @@
     "jquery-contextmenu": "^2.5.0",
     "jquery-sortable": "^0.9.13",
     "jssor-slider": "^24.1.5",
-    "mongoose": "^4.5.10",
+    "mongoose": "^5.7.5",
     "morgan": "~1.7.0",
     "multer": "^1.2.0",
     "node-schedule": "^1.2.3",
