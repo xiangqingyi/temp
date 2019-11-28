@@ -28,7 +28,7 @@
     "jquery-sortable": "^0.9.13",
     "jssor-slider": "^24.1.5",
     "mongoose": "^4.5.10",
-    "morgan": "~1.7.0",
+    "morgan": "~1.9.1",
     "multer": "^1.2.0",
     "node-schedule": "^1.2.3",
     "oauth2-server": "^2.4.1",
