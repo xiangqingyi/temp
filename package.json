@@ -23,7 +23,7 @@
     "exceljs": "^0.7.1",
     "express": "~4.13.4",
     "express-session": "^1.15.1",
-    "jquery": "^3.2.1",
+    "jquery": "^3.5.0",
     "jquery-contextmenu": "^2.5.0",
     "jquery-sortable": "^0.9.13",
     "jssor-slider": "^24.1.5",
